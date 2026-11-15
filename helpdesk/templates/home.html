@@ -19,17 +19,5 @@
     </section>
   </div>
 
-  <h2>What is in the database</h2>
-  <table>
-    <caption>Rows in each table</caption>
-    <thead><tr><th scope="col">Table</th><th scope="col">Rows</th></tr></thead>
-    <tbody>
-      {% for name, number in counts.items() %}
-      <tr><td>{{ name|capitalize }}</td><td>{{ number }}</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% if counts["users"] == 0 %}
-  <p>The database is empty. Run <code>python seed.py</code> to load the sample data.</p>
-  {% endif %}
+  <p><a class="button" href="{{ url_for('auth.signin') }}">Sign in</a></p>
 {% endblock %}

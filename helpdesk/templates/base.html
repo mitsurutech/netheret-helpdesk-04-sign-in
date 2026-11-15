@@ -20,13 +20,34 @@
       <a class="brand" href="{{ url_for('main.home') }}">Netheret <span>help desk</span></a>
       <nav aria-label="Main">
         <ul class="nav-list">
+          {% if g.user %}
+          {{ nav_link('main.dashboard', 'Dashboard') }}
+          {% else %}
           {{ nav_link('main.home', 'Home') }}
+          {{ nav_link('auth.signin', 'Sign in') }}
+          {% endif %}
         </ul>
       </nav>
+      {% if g.user %}
+      <form class="signout" method="post" action="{{ url_for('auth.signout') }}">
+        <span>{{ g.user.name }}</span>
+        <button type="submit" class="secondary">Sign out</button>
+      </form>
+      {% endif %}
     </div>
   </header>
 
   <main id="main" class="wrap" tabindex="-1">
+    {# Short messages from the last action, like "Signed in". #}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flashes">
+      {% for message in messages %}
+      <p class="flash">{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     {% block content %}{% endblock %}
   </main>
 

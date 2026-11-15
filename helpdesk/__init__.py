@@ -3,6 +3,9 @@
 create_app() builds the Flask app. Flask looks for a function with this
 name when you run `flask --app helpdesk run`.
 """
+import os
+import secrets
+
 from flask import Flask
 
 from .extensions import db
@@ -10,6 +13,12 @@ from .extensions import db
 
 def create_app():
     app = Flask(__name__)
+
+    # The secret key signs the session cookie, so nobody can change it.
+    # On a real server, set the SECRET_KEY environment variable. If it is not
+    # set we make a random key each time the app starts: fine on your own
+    # computer, but it signs everybody out when the app restarts.
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 
     # SQLite keeps the whole database in one file. A relative path like this
     # one is put in the app's "instance" folder, which Git ignores.
@@ -23,7 +32,8 @@ def create_app():
     db.init_app(app)
 
     # Each part of the app is a blueprint: a group of pages in its own file.
-    from . import main
+    from . import auth, main
+    app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
 
     # Make any tables that do not exist yet. Importing models first tells
